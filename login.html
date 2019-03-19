@@ -88,7 +88,7 @@
 				<a href="index.html"><img src="img/resgister_logo.png"></a>
 			</div>
 			<div class="register_link">
-				新用户，<a href="#">快速注册</a>		
+				新用户，<a href="register.html">快速注册</a>		
 			</div>
 	</header>
 	</div>	
@@ -100,16 +100,17 @@
 			<div class="content">	
 	            <div class="tab_menu">
 	                <ul>
-	                    <li><a href="#" id="menu_account">账户登录</a> </li>
+	                    <li><a href="#" id="menu_account" style="border-bottom: 2px solid #4095d4;">账户登录</a> </li>
 	                    <li><a href="#" id="menu_mobile">手机验证登录</a> </li>
 	                </ul>
 	            </div>
 				<!-- 账户登录 -->
 	            <div class="account_login" id="account_login">
-	                <input type="text" placeholder="用户名/手机号/邮箱">
-	                <input type="password" placeholder="密码">
+	                <input type="text" id="userName" placeholder="用户名/手机号/邮箱">
+	                <input type="password" id="userPassword" placeholder="密码">
 	                <p><a href="#">忘记密码？</a><a href="#">《仁和药房网用户协议》</a> </p>
-	             	<input type="button" value="登 录" class="btn_login">
+	             	<input type="button" value="登 录" class="btn_login" id="btn_login">
+	             	<span id="btnSpan"></span>
 	             	<div class="other_login">
 	       				<span>您还可以通过以下方式登录：</span>
 	            	</div>
@@ -144,6 +145,8 @@
 	</footer>
 </body>
 </html>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js" ></script>
+<script type="text/javascript" src="js/cookieTools.js" ></script>
 <script type="text/javascript" src="js/common.js" ></script>
 <script type="text/javascript">
 	// 切换显示（登录）
@@ -154,14 +157,36 @@
 	
 	menu_account.onmouseover = function(){
 		menu_mobile.style = "";
-		this.style.cssText=`border-bottom: 2px solid #bc8720`;
+		this.style.cssText=`border-bottom: 2px solid #4095d4`;
 		account_login.style.display = "block";
 		mobile_login.style.display = "none";
 	}
 	menu_mobile.onmouseover = function(){
-		menu_account = "";
-		this.style.cssText=`border-bottom: 2px solid #bc8720`;
+		menu_account.style = "";
+		this.style.cssText=`border-bottom: 2px solid #4095d4`;
 		account_login.style.display = "none";
 		mobile_login.style.display = "block";
+	}
+	// 用户登录
+	document.getElementById("btn_login").onclick =  function(){
+		//创建对象
+		let  xhr  = new XMLHttpRequest();
+		//设置请求参数
+		xhr.open("post","loginCheck.php",true);
+		//状态变化
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState==4&&xhr.status==200){
+				//接收响应
+				if(xhr.responseText=="1"){
+					addCookie("userName",document.getElementById("userName").value,30);
+					window.location.href="index.html";
+				}
+				else{
+					document.getElementById("btnSpan").innerHTML = "登录失败";
+				}
+			}
+		}
+		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+		xhr.send(`userName=${document.getElementById("userName").value}&userPassword=${document.getElementById("userPassword").value}`);
 	}
 </script>
